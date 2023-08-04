@@ -67,17 +67,17 @@ function getBrred (evt) {
 
         elementSet.successTextElement.style.display = "none";
         elementSet.infoElement.style.display = "flex";
-        // console.log(responce);
+    
         elementSet.infoElement.innerHTML = "";
 
         const { url, breeds } = responce.data[0]
-        const { description, temperament} = breeds[0]
+        const { description, temperament, name} = breeds[0]
         
         elementSet.infoElement.innerHTML = `
         <img src=${url} width="300" hight="250">
         </img> 
         <div name="text-block">
-            <p1 name="des">Description</p1>
+            <p1 name="des">${name}</p1>
             <a>${description}</a>
             <a name="text-temp"><span name="temp">Temperament: </span>${temperament}</a>
         </div>`;
