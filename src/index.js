@@ -1,4 +1,10 @@
 import {fetchBreeds, fetchCatByBreed} from './cat-api.js';
+import SlimSelect from 'slim-select'
+import Notiflix from 'notiflix';
+
+// new SlimSelect({
+//     select: '#selectElement',
+//   })
 
 const elementSet = {
     selectElement: document.querySelector('.breed-select'),
@@ -40,16 +46,27 @@ function newSettings() {
 
 fetchBreeds().then(responce => {
 
+    // let nameBreeds = [];
+
     elementSet.selectElement.style.display = "block";
     elementSet.successTextElement.style.display = "none";
     elementSet.errorTextElement.style.displey = "none";
-    
+   
     responce.data.map(result => {
         let newOpt = document.createElement('option');
         newOpt.setAttribute('value', result.id);
         newOpt.textContent = result.name;
+        // nameBreeds.push({text: result.name, value: result.id });
         elementSet.selectElement.appendChild(newOpt);
     });
+
+    new SlimSelect({
+        select: '#selectElement',
+      
+        // Array of Option objects
+        data: nameBreeds,
+
+      })
 }).catch(() => {
 
     elementSet.successTextElement.style.display = "none";
@@ -57,22 +74,26 @@ fetchBreeds().then(responce => {
  } 
 );
 
-
 function getBrred (evt) {
 
     elementSet.successTextElement.style.display = "block";
     elementSet.infoElement.style.display = "none";
 
     fetchCatByBreed(evt.target.value).then(responce => {
-
+       
         elementSet.successTextElement.style.display = "none";
         elementSet.infoElement.style.display = "flex";
     
-        elementSet.infoElement.innerHTML = "";
+        elementSet.infoElement.innerHTML = ""; 
+        
+        // my error
+        if(responce.hasOwnProperty("data") && responce.data.length === 0)  
+            throw new Error("Breed array is empty!");
 
         const { url, breeds } = responce.data[0]
         const { description, temperament, name} = breeds[0]
         
+
         elementSet.infoElement.innerHTML = `
         <img src=${url} width="300" hight="250">
         </img> 
@@ -83,10 +104,11 @@ function getBrred (evt) {
         </div>`;
         newSettings();
         
-    }).catch(() => {
+    }).catch(error => {
 
         elementSet.successTextElement.style.display = "none";
         elementSet.errorTextElement.style.visibility = "visible";
+        Notiflix.Notify.warning(error.message);
      } 
     );
 };
