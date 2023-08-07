@@ -1,10 +1,5 @@
 import {fetchBreeds, fetchCatByBreed} from './cat-api.js';
-import SlimSelect from 'slim-select'
 import Notiflix from 'notiflix';
-
-// new SlimSelect({
-//     select: '#selectElement',
-//   })
 
 const elementSet = {
     selectElement: document.querySelector('.breed-select'),
@@ -46,27 +41,16 @@ function newSettings() {
 
 fetchBreeds().then(responce => {
 
-    // let nameBreeds = [];
-
     elementSet.selectElement.style.display = "block";
     elementSet.successTextElement.style.display = "none";
     elementSet.errorTextElement.style.displey = "none";
-   
-    responce.data.map(result => {
-        let newOpt = document.createElement('option');
-        newOpt.setAttribute('value', result.id);
-        newOpt.textContent = result.name;
-        // nameBreeds.push({text: result.name, value: result.id });
-        elementSet.selectElement.appendChild(newOpt);
-    });
-
-    new SlimSelect({
-        select: '#selectElement',
-      
-        // Array of Option objects
-        data: nameBreeds,
-
-      })
+  
+    // add 'options' element to 'select'
+    const newOptList = responce.data.reduce((elements, { id, name }) => {
+        return elements + `<option value=${id}>${name}</options>`;
+    })
+    elementSet.selectElement.insertAdjacentHTML('beforeend', newOptList);
+    
 }).catch(() => {
 
     elementSet.successTextElement.style.display = "none";
