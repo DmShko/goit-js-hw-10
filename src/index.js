@@ -1,12 +1,19 @@
 import {fetchBreeds, fetchCatByBreed} from './cat-api.js';
 import Notiflix from 'notiflix';
+import SlimSelect from 'slim-select'
 
 const elementSet = {
     selectElement: document.querySelector('.breed-select'),
     infoElement: document.querySelector('.cat-info'),
     successTextElement: document.querySelector('.loader'),
     errorTextElement: document.querySelector('.error'),
+    
 }
+
+const select = new SlimSelect({
+  select: '#selectElement',
+  data: [],
+})
 
 // start settings
 elementSet.selectElement.style.width = "150px";
@@ -19,6 +26,7 @@ elementSet.infoElement.style.gap = "20px";
 elementSet.successTextElement.style.position = "absolute";
 elementSet.successTextElement.style.left = "50vw";
 elementSet.successTextElement.style.top = "300px";
+
 
 function newSettings() {
     const textBlock = document.querySelector('[name="text-block"]');
@@ -40,17 +48,20 @@ function newSettings() {
 }
 
 fetchBreeds().then(responce => {
-
-    elementSet.selectElement.style.display = "block";
-    elementSet.successTextElement.style.display = "none";
-    elementSet.errorTextElement.style.displey = "none";
+    let breedArr = [];
+    // elementSet.selectElement.style.display = "block";
+    // elementSet.successTextElement.style.display = "none";
+    // elementSet.errorTextElement.style.displey = "none";
   
     // add 'options' element to 'select'
-    const newOptList = responce.data.reduce((elements, { id, name }) => {
-        return elements + `<option value=${id}>${name}</options>`;
+    // const newOptList = responce.data.reduce((elements, { id, name }) => {
+    const newOptList = responce.data.map(({ id, name }) => {
+        breedArr.push({text: name, value: id });
+        // return elements + `<option value=${id}>${name}</options>`;
     })
-    elementSet.selectElement.insertAdjacentHTML('beforeend', newOptList);
-    
+    // elementSet.selectElement.insertAdjacentHTML('beforeend', newOptList);
+    select.setData(breedArr);
+
 }).catch(() => {
 
     elementSet.successTextElement.style.display = "none";
